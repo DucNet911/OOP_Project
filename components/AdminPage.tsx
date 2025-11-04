@@ -68,7 +68,7 @@ const navItems = [
   { name: 'Quản lý sản phẩm', icon: ProductIcon },
   { name: 'Quản lý đơn hàng', icon: OrderIcon },
   { name: 'Quản lý quảng cáo', icon: PromotionIcon },
-  { name: 'Quản lý kiến thức', icon: PostIcon },
+  { name: 'Quản lý bài viết', icon: PostIcon },
   { name: 'Quản lý người dùng', icon: UserIconSvg },
   { name: 'Trang Chủ', icon: HomeIcon },
 ];
@@ -609,7 +609,7 @@ const AdminPage: React.FC<AdminPageProps> = ({
             return <OrderManagementView orders={orders} onUpdateStatus={onUpdateOrderStatus} />;
         case 'Quản lý quảng cáo':
             return <PromotionManagementView products={products} onToggleFeatured={onToggleFeatured} />;
-        case 'Quản lý kiến thức':
+        case 'Quản lý bài viết':
             return <KnowledgeManagementView 
                         supplementArticles={supplementArticles}
                         nutritionArticles={nutritionArticles}
