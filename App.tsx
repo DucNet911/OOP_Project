@@ -237,7 +237,7 @@ const App: React.FC = () => {
       ...orderDetails,
       id: `GS${Math.floor(Math.random() * 90000) + 10000}`,
       date: new Date().toLocaleDateString('vi-VN'),
-      status: 'Đang xử lý',
+      status: 'Chờ xác nhận',
     };
     setOrders(prevOrders => [newOrder, ...prevOrders]);
     alert('Cảm ơn bạn đã đặt hàng! Chúng tôi sẽ xử lý đơn hàng của bạn sớm nhất.');
@@ -248,6 +248,14 @@ const App: React.FC = () => {
     setOrders(prevOrders =>
       prevOrders.map(order =>
         order.id === orderId ? { ...order, status } : order
+      )
+    );
+  }, []);
+  
+  const handleCancelOrder = useCallback((orderId: string) => {
+    setOrders(prevOrders =>
+      prevOrders.map(order =>
+        order.id === orderId ? { ...order, status: 'Đã Hủy' } : order
       )
     );
   }, []);
@@ -410,7 +418,7 @@ const App: React.FC = () => {
       case 'account':
         return <AccountPage currentUser={currentUser!} onBack={handleGoHome} />;
       case 'order-history':
-        return <OrderHistoryPage onBack={handleGoHome} orders={orders} />;
+        return <OrderHistoryPage onBack={handleGoHome} orders={orders} onCancelOrder={handleCancelOrder} />;
       case 'info':
         return <InfoPage title={infoPageContent!.title} onBack={handleGoHome}>{infoPageContent!.content}</InfoPage>;
       case 'knowledge-list':
