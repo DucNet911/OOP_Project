@@ -11,12 +11,17 @@ const OrderHistoryPage: React.FC<OrderHistoryPageProps> = ({ onBack, orders }) =
 
   const getStatusClass = (status: Order['status']) => {
     switch (status) {
-      case 'Đã giao hàng':
+      case 'Hoàn thành':
         return 'bg-green-500/20 text-green-400';
       case 'Đang xử lý':
         return 'bg-yellow-500/20 text-yellow-400';
-      case 'Đã hủy':
+      case 'Đang giao hàng':
+        return 'bg-blue-500/20 text-blue-400';
+      case 'Đã Hủy':
         return 'bg-red-500/20 text-red-400';
+      case 'Trả hàng':
+        return 'bg-orange-500/20 text-orange-400';
+      case 'Chờ xác nhận':
       default:
         return 'bg-gray-500/20 text-gray-400';
     }

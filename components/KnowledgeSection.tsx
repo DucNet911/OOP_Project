@@ -1,31 +1,15 @@
 
 import React from 'react';
 import { Article } from '../types';
-
-interface ArticleCardProps {
-  article: Article;
-}
-
-const ArticleCard: React.FC<ArticleCardProps> = ({ article }) => {
-  return (
-    <a href={article.url} target="_blank" rel="noopener noreferrer" className="block bg-gym-dark rounded-lg overflow-hidden group">
-      <img src={article.image} alt={article.title} className="w-full h-40 object-cover group-hover:opacity-80 transition-opacity" />
-      <div className="p-4">
-        <p className="text-xs text-gym-yellow font-semibold mb-1">{article.category}</p>
-        <h3 className="font-bold text-white mb-2 h-12 overflow-hidden">{article.title}</h3>
-        <p className="text-sm text-gym-gray mb-3 h-10 overflow-hidden">{article.snippet}</p>
-        <span className="text-xs text-gray-500">{article.date}</span>
-      </div>
-    </a>
-  );
-};
+import ArticleCard from './ArticleCard';
 
 interface KnowledgeSectionProps {
   supplementArticles: Article[];
   nutritionArticles: Article[];
+  onViewAll: (categoryTitle: string) => void;
 }
 
-const KnowledgeSection: React.FC<KnowledgeSectionProps> = ({ supplementArticles, nutritionArticles }) => {
+const KnowledgeSection: React.FC<KnowledgeSectionProps> = ({ supplementArticles, nutritionArticles, onViewAll }) => {
   return (
     <section>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
@@ -33,10 +17,10 @@ const KnowledgeSection: React.FC<KnowledgeSectionProps> = ({ supplementArticles,
         <div>
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-2xl font-bold uppercase text-white">Kiến thức Supplement</h3>
-            <a href="#" className="text-gym-yellow font-semibold hover:underline">Xem tất cả</a>
+            <button onClick={() => onViewAll('Kiến thức Supplement')} className="text-gym-yellow font-semibold hover:underline">Xem tất cả</button>
           </div>
           <div className="space-y-6">
-            {supplementArticles.map(article => (
+            {supplementArticles.slice(0, 2).map(article => (
               <ArticleCard key={article.id} article={article} />
             ))}
           </div>
@@ -46,10 +30,10 @@ const KnowledgeSection: React.FC<KnowledgeSectionProps> = ({ supplementArticles,
         <div>
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-2xl font-bold uppercase text-white">Kiến thức Dinh dưỡng</h3>
-            <a href="#" className="text-gym-yellow font-semibold hover:underline">Xem tất cả</a>
+            <button onClick={() => onViewAll('Kiến thức Dinh dưỡng')} className="text-gym-yellow font-semibold hover:underline">Xem tất cả</button>
           </div>
           <div className="space-y-6">
-            {nutritionArticles.map(article => (
+            {nutritionArticles.slice(0, 2).map(article => (
               <ArticleCard key={article.id} article={article} />
             ))}
           </div>

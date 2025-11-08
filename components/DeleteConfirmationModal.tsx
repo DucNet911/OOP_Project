@@ -4,10 +4,17 @@ interface DeleteConfirmationModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  productName: string;
+  itemName: string;
+  itemType?: string;
 }
 
-const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({ isOpen, onClose, onConfirm, productName }) => {
+const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({ 
+  isOpen, 
+  onClose, 
+  onConfirm, 
+  itemName, 
+  itemType = 'sản phẩm' 
+}) => {
   if (!isOpen) {
     return null;
   }
@@ -23,7 +30,7 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({ isOpe
       >
         <h2 className="text-2xl font-bold mb-4">Xác nhận xóa</h2>
         <p className="text-[var(--admin-text-secondary)] mb-8">
-          Bạn có chắc chắn muốn xóa sản phẩm <strong className="text-[var(--admin-text-main)]">{productName}</strong>? Hành động này không thể hoàn tác.
+          Bạn có chắc chắn muốn xóa {itemType} <strong className="text-[var(--admin-text-main)]">{itemName}</strong>? Hành động này không thể hoàn tác.
         </p>
         
         <div className="flex justify-center items-center space-x-4">

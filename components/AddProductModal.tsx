@@ -19,13 +19,18 @@ const subCategoryMap: { [key: string]: string[] } = {
     "Protein Bar",
     "Meal Replacements",
   ],
+  "Tăng sức mạnh": [
+      "Pre-Workout",
+      "Creatine",
+      "BCAAs",
+  ],
 };
 
 const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAddProduct, onUpdateProduct, productToEdit }) => {
   const [sku, setSku] = useState('');
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
-  const [stock, setStock] = useState('');
+  const [stockQuantity, setStockQuantity] = useState('');
   const [image, setImage] = useState('');
   const [category, setCategory] = useState('');
   const [subCategory, setSubCategory] = useState('');
@@ -40,7 +45,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
             setSku(productToEdit.sku || '');
             setName(productToEdit.name);
             setPrice(String(productToEdit.price));
-            setStock(String(productToEdit.total || 0));
+            setStockQuantity(String(productToEdit.stockQuantity || 0));
             setImage(productToEdit.images[0] || '');
             setCategory(productToEdit.category);
             setSubCategory(productToEdit.subCategory || '');
@@ -49,7 +54,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
             setSku('');
             setName('');
             setPrice('');
-            setStock('');
+            setStockQuantity('');
             setImage('');
             setCategory('');
             setSubCategory('');
@@ -76,8 +81,8 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
     if (!price.trim()) { setError('Giá sản phẩm là bắt buộc.'); return; }
     const priceNum = parseFloat(price);
     if (isNaN(priceNum) || priceNum <= 0) { setError('Giá phải là một số dương hợp lệ.'); return; }
-    if (!stock.trim()) { setError('Số lượng tồn kho là bắt buộc.'); return; }
-    const stockNum = parseFloat(stock);
+    if (!stockQuantity.trim()) { setError('Số lượng tồn kho là bắt buộc.'); return; }
+    const stockNum = parseFloat(stockQuantity);
     if (isNaN(stockNum) || !Number.isInteger(stockNum) || stockNum < 0) { setError('Tồn kho phải là một số nguyên không âm.'); return; }
     if (!image.trim()) { setError('URL hình ảnh là bắt buộc.'); return; }
     try { new URL(image.trim()); } catch (_) { setError('Vui lòng nhập URL hình ảnh hợp lệ.'); return; }
@@ -90,7 +95,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
       sku: sku.trim(),
       name: name.trim(),
       price: priceNum,
-      stock: stockNum,
+      stockQuantity: stockNum,
       image: image.trim(),
       category: category,
       subCategory: subCategory,
@@ -154,7 +159,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
             </div>
             <div>
               <label htmlFor="productStock" className="block text-sm font-medium text-[var(--admin-text-secondary)] mb-1">Tồn kho</label>
-              <input type="text" id="productStock" value={stock} onChange={e => setStock(e.target.value)} className={inputStyles} placeholder="ví dụ: 150"/>
+              <input type="text" id="productStock" value={stockQuantity} onChange={e => setStockQuantity(e.target.value)} className={inputStyles} placeholder="ví dụ: 150"/>
             </div>
           </div>
           <div>

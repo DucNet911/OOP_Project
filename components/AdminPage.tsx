@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { User, Theme, Product, Order, OrderStatus } from '../types';
+import { User, Theme, Product, Order, OrderStatus, Article, Brand } from '../types';
 import AddProductModal from './AddProductModal';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
+import AddKnowledgeModal from './AddKnowledgeModal';
+import KnowledgeManagementView from './KnowledgeManagementView';
+import BrandManagementView from './BrandManagementView';
+import AddBrandModal from './AddBrandModal';
 
 // SVG Icon Components
 const PaletteIcon: React.FC<{className?: string}> = ({className}) => (
@@ -26,12 +30,6 @@ const OrderIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) 
         <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z" />
     </svg>
 );
-const UserIconSvg: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) => (
-    <svg className={className} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-2.452a9.75 9.75 0 00-1.594-1.594l-2.072-2.072a3.375 3.375 0 00-4.774-4.774l-2.072-2.072a9.75 9.75 0 00-1.594-1.594 9.337 9.337 0 00-2.452 4.121 9.38 9.38 0 00.372 2.625M12 15a3 3 0 100-6 3 3 0 000 6z" />
-        <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-);
 const PostIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) => (
     <svg className={className} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
@@ -40,6 +38,12 @@ const PostIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) =
 const PromotionIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) => (
     <svg className={className} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.31h5.418a.562.562 0 01.31.95l-4.225 3.411a.563.563 0 00-.175.545l1.625 5.022a.562.562 0 01-.84.62l-4.438-3.131a.563.563 0 00-.65 0l-4.438 3.13a.562.562 0 01-.84-.62l1.625-5.022a.563.563 0 00-.175-.545L2.57 9.86a.562.562 0 01.31-.95h5.418a.563.563 0 00.475-.31L11.48 3.5z" />
+    </svg>
+);
+const TagIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) => (
+    <svg className={className} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M6 6h.008v.008H6V6z" />
     </svg>
 );
 const LogoutIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) => (
@@ -59,15 +63,19 @@ const HomeIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) =
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 21V12" />
     </svg>
 );
-
+const ChevronDownIcon: React.FC<{className?: string}> = ({className}) => (
+    <svg className={className} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+    </svg>
+);
 
 const navItems = [
   { name: 'Bảng điều khiển', icon: DashboardIcon },
   { name: 'Quản lý sản phẩm', icon: ProductIcon },
   { name: 'Quản lý đơn hàng', icon: OrderIcon },
-  { name: 'Quản lý quảng cáo', icon: PromotionIcon },
-  { name: 'Quản lý người dùng', icon: UserIconSvg },
-  { name: 'Quản lý bài viết', icon: PostIcon },
+  { name: 'Quản lý sản phẩm nổi bật', icon: PromotionIcon },
+  { name: 'Quản lý thương hiệu', icon: TagIcon },
+  { name: 'Quản lý kiến thức', icon: PostIcon },
   { name: 'Trang Chủ', icon: HomeIcon },
 ];
 
@@ -75,7 +83,7 @@ export interface ProductFormData {
     sku: string;
     name: string;
     price: number;
-    stock: number;
+    stockQuantity: number;
     image: string;
     category: string;
     description: string;
@@ -91,8 +99,18 @@ interface AdminPageProps {
   onUpdateProduct: (product: Product) => void;
   onDeleteProduct: (productId: number) => void;
   onToggleFeatured: (productId: number) => void;
+  brands: Brand[];
+  onAddBrand: (brand: Omit<Brand, 'id'>) => void;
+  onUpdateBrand: (brand: Brand) => void;
+  onDeleteBrand: (brandId: number) => void;
+  onToggleFeaturedBrand: (brandId: number) => void;
   orders: Order[];
   onUpdateOrderStatus: (orderId: string, status: OrderStatus) => void;
+  supplementArticles: Article[];
+  nutritionArticles: Article[];
+  onAddArticle: (article: Omit<Article, 'id' | 'date'>) => void;
+  onUpdateArticle: (article: Article) => void;
+  onDeleteArticle: (articleId: number) => void;
 }
 
 const DashboardView: React.FC<{products: Product[]}> = ({products}) => (
@@ -137,7 +155,7 @@ const DashboardView: React.FC<{products: Product[]}> = ({products}) => (
                     <tr key={product.id} className="border-b border-[var(--admin-border-color)] last:border-b-0">
                       <td className="px-6 py-4 font-medium">{product.name}</td>
                       <td className="px-6 py-4">{product.price.toLocaleString('vi-VN')}₫</td>
-                      <td className="px-6 py-4">{product.total || 0}</td>
+                      <td className="px-6 py-4">{product.stockQuantity || 0}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -228,7 +246,7 @@ const ProductManagementView: React.FC<{
                           <td className="px-6 py-4 font-mono">{product.sku}</td>
                           <td className="px-6 py-4">{product.category}</td>
                           <td className="px-6 py-4">{product.price.toLocaleString('vi-VN')}₫</td>
-                          <td className="px-6 py-4">{product.total || 0}</td>
+                          <td className="px-6 py-4">{product.stockQuantity || 0}</td>
                           <td className="px-6 py-4">
                             <span className={`px-2 py-1 text-xs font-semibold rounded-full ${product.inStock ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
                                 {product.inStock ? 'Còn hàng' : 'Hết hàng'}
@@ -248,14 +266,14 @@ const ProductManagementView: React.FC<{
     );
 };
 
-const PromotionManagementView: React.FC<{
+const FeaturedProductManagementView: React.FC<{
     products: Product[];
     onToggleFeatured: (productId: number) => void;
 }> = ({ products, onToggleFeatured }) => {
     return (
         <>
             <header className="mb-8">
-                <h1 className="text-3xl font-bold">Quản lý quảng cáo</h1>
+                <h1 className="text-3xl font-bold">Quản lý sản phẩm nổi bật</h1>
                 <p className="text-[var(--admin-text-secondary)] mt-1">Chọn sản phẩm sẽ hiển thị trên băng chuyền trang chủ.</p>
             </header>
             <div className="bg-[var(--admin-bg-card)] p-6 rounded-2xl shadow-sm">
@@ -265,7 +283,7 @@ const PromotionManagementView: React.FC<{
                             <tr>
                                 <th scope="col" className="px-6 py-3">Sản phẩm</th>
                                 <th scope="col" className="px-6 py-3">Trạng thái</th>
-                                <th scope="col" className="px-6 py-3 text-center">Hiển thị quảng cáo</th>
+                                <th scope="col" className="px-6 py-3 text-center">Hiển thị nổi bật</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -277,7 +295,7 @@ const PromotionManagementView: React.FC<{
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className={`px-2 py-1 text-xs font-semibold rounded-full ${product.isFeatured ? 'bg-blue-500/20 text-blue-400' : 'bg-gray-500/20 text-gray-400'}`}>
-                                            {product.isFeatured ? 'Đang quảng cáo' : 'Không quảng cáo'}
+                                            {product.isFeatured ? 'Đang nổi bật' : 'Không nổi bật'}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 text-center">
@@ -307,10 +325,15 @@ const OrderManagementView: React.FC<{
 }> = ({ orders, onUpdateStatus }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('Tất cả');
+    const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
     
+    const handleToggleRow = (orderId: string) => {
+        setExpandedOrderId(prevId => (prevId === orderId ? null : orderId));
+    };
+
     const inputStyles = "bg-[var(--admin-bg-card)] border border-[var(--admin-border-color)] rounded-lg py-2.5 px-4 focus:outline-none focus:ring-2 ring-[var(--admin-text-accent)]";
 
-    const orderStatuses: OrderStatus[] = ['Đang xử lý', 'Đã giao hàng', 'Đã hủy'];
+    const orderStatuses: OrderStatus[] = ["Chờ xác nhận", "Đang xử lý", "Đang giao hàng", "Hoàn thành", "Đã Hủy", "Trả hàng"];
 
     const filteredOrders = useMemo(() => {
         return orders.filter(order => {
@@ -323,9 +346,12 @@ const OrderManagementView: React.FC<{
 
     const getStatusClass = (status: OrderStatus) => {
         switch (status) {
-          case 'Đã giao hàng': return 'bg-green-500/20 text-green-400';
+          case 'Hoàn thành': return 'bg-green-500/20 text-green-400';
           case 'Đang xử lý': return 'bg-yellow-500/20 text-yellow-400';
-          case 'Đã hủy': return 'bg-red-500/20 text-red-400';
+          case 'Đang giao hàng': return 'bg-blue-500/20 text-blue-400';
+          case 'Đã Hủy': return 'bg-red-500/20 text-red-400';
+          case 'Trả hàng': return 'bg-orange-500/20 text-orange-400';
+          case 'Chờ xác nhận':
           default: return 'bg-gray-500/20 text-gray-400';
         }
     };
@@ -379,23 +405,77 @@ const OrderManagementView: React.FC<{
                     </thead>
                     <tbody>
                       {filteredOrders.map((order) => (
-                        <tr key={order.id} className="border-b border-[var(--admin-border-color)] hover:bg-[var(--admin-bg-hover)]">
-                          <td className="px-6 py-4 font-mono text-[var(--admin-text-accent)]">{order.id}</td>
-                          <td className="px-6 py-4 font-medium">{order.customer.name}</td>
-                          <td className="px-6 py-4">{order.date}</td>
-                          <td className="px-6 py-4">{order.total.toLocaleString('vi-VN')}₫</td>
-                          <td className={`px-6 py-4 font-semibold ${getPaymentStatusClass(order.paymentStatus)}`}>{order.paymentStatus}</td>
-                          <td className="px-6 py-4">
-                            <select 
-                                value={order.status}
-                                onChange={(e) => onUpdateStatus(order.id, e.target.value as OrderStatus)}
-                                className={`text-xs font-semibold rounded-md p-1.5 border-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--admin-bg-card)] focus:ring-[var(--admin-text-accent)] ${getStatusClass(order.status)}`}
-                                style={{ backgroundColor: 'transparent' }}
+                        <React.Fragment key={order.id}>
+                            <tr 
+                                className="border-b border-[var(--admin-border-color)] hover:bg-[var(--admin-bg-hover)] cursor-pointer"
+                                onClick={() => handleToggleRow(order.id)}
                             >
-                               {orderStatuses.map(s => <option key={s} value={s} className="bg-[var(--admin-bg-card)] text-[var(--admin-text-main)]">{s}</option>)}
-                            </select>
-                          </td>
-                        </tr>
+                                <td className="px-6 py-4 font-mono text-[var(--admin-text-accent)] flex items-center space-x-2">
+                                    <ChevronDownIcon className={`w-4 h-4 transition-transform ${expandedOrderId === order.id ? 'rotate-180' : ''}`} />
+                                    <span>{order.id}</span>
+                                </td>
+                                <td className="px-6 py-4 font-medium">{order.customer.name}</td>
+                                <td className="px-6 py-4">{order.date}</td>
+                                <td className="px-6 py-4">{order.total.toLocaleString('vi-VN')}₫</td>
+                                <td className={`px-6 py-4 font-semibold ${getPaymentStatusClass(order.paymentStatus)}`}>{order.paymentStatus}</td>
+                                <td className="px-6 py-4">
+                                    <select 
+                                        value={order.status}
+                                        onChange={(e) => {
+                                            e.stopPropagation();
+                                            onUpdateStatus(order.id, e.target.value as OrderStatus)
+                                        }}
+                                        onClick={(e) => e.stopPropagation()}
+                                        className={`text-xs font-semibold rounded-md p-1.5 border-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--admin-bg-card)] focus:ring-[var(--admin-text-accent)] ${getStatusClass(order.status)}`}
+                                        style={{ backgroundColor: 'transparent' }}
+                                    >
+                                    {orderStatuses.map(s => <option key={s} value={s} className="bg-[var(--admin-bg-card)] text-[var(--admin-text-main)]">{s}</option>)}
+                                    </select>
+                                </td>
+                            </tr>
+                            {expandedOrderId === order.id && (
+                                <tr className="bg-[var(--admin-bg-hover)]">
+                                <td colSpan={6} className="p-4">
+                                    <div className="p-4 bg-[var(--admin-bg-main)] rounded-lg">
+                                        <h4 className="font-bold text-lg mb-4">Chi tiết đơn hàng</h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div>
+                                                <h5 className="font-semibold text-[var(--admin-text-secondary)] mb-2">Thông tin khách hàng</h5>
+                                                <div className="space-y-1 text-sm">
+                                                    <p><strong>Tên:</strong> {order.customer.name}</p>
+                                                    <p><strong>Email:</strong> {order.customer.email}</p>
+                                                    <p><strong>SĐT:</strong> {order.customer.phone}</p>
+                                                    <p><strong>Địa chỉ:</strong> {order.customer.address}</p>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <h5 className="font-semibold text-[var(--admin-text-secondary)] mb-2">Thông tin thanh toán</h5>
+                                                <div className="space-y-1 text-sm">
+                                                <p><strong>Phương thức:</strong> {order.paymentMethod === 'cod' ? 'Thanh toán khi nhận hàng (COD)' : 'Thanh toán qua thẻ'}</p>
+                                                <p><strong>Trạng thái:</strong> <span className={`font-semibold ${getPaymentStatusClass(order.paymentStatus)}`}>{order.paymentStatus}</span></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="mt-6">
+                                            <h5 className="font-semibold text-[var(--admin-text-secondary)] mb-2">Sản phẩm trong đơn</h5>
+                                            <ul className="space-y-3">
+                                                {order.items.map((item, index) => (
+                                                    <li key={index} className="flex items-center space-x-4 p-2 rounded-md bg-[var(--admin-bg-hover)]">
+                                                        <img src={item.images[0]} alt={item.name} className="w-12 h-12 object-cover rounded-md" />
+                                                        <div className="flex-grow">
+                                                            <p className="font-semibold text-sm">{item.name}</p>
+                                                            <p className="text-xs text-[var(--admin-text-secondary)]">Số lượng: {item.quantity}</p>
+                                                        </div>
+                                                        <p className="font-semibold text-sm">{(item.price * item.quantity).toLocaleString('vi-VN')}₫</p>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </td>
+                                </tr>
+                            )}
+                        </React.Fragment>
                       ))}
                     </tbody>
                   </table>
@@ -418,17 +498,51 @@ const ComingSoonPage: React.FC<{ title: string }> = ({ title }) => (
 );
 
 
-const AdminPage: React.FC<AdminPageProps> = ({ currentUser, onLogout, onViewSite, products, onAddProduct, onUpdateProduct, onDeleteProduct, onToggleFeatured, orders, onUpdateOrderStatus }) => {
+const AdminPage: React.FC<AdminPageProps> = ({ 
+    currentUser, 
+    onLogout, 
+    onViewSite, 
+    products, 
+    onAddProduct, 
+    onUpdateProduct, 
+    onDeleteProduct, 
+    onToggleFeatured,
+    brands,
+    onAddBrand,
+    onUpdateBrand,
+    onDeleteBrand,
+    onToggleFeaturedBrand,
+    orders, 
+    onUpdateOrderStatus,
+    supplementArticles,
+    nutritionArticles,
+    onAddArticle,
+    onUpdateArticle,
+    onDeleteArticle
+}) => {
   const [activePage, setActivePage] = useState('Bảng điều khiển');
   const [theme, setTheme] = useState<Theme>('default');
   const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
   const themeMenuRef = useRef<HTMLDivElement>(null);
   
+  // Product Modals State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [productToEdit, setProductToEdit] = useState<Product | null>(null);
-  
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
+
+  // Knowledge Modals State
+  const [isKnowledgeModalOpen, setIsKnowledgeModalOpen] = useState(false);
+  const [articleToEdit, setArticleToEdit] = useState<Article | null>(null);
+  const [isKnowledgeDeleteModalOpen, setIsKnowledgeDeleteModalOpen] = useState(false);
+  const [articleToDelete, setArticleToDelete] = useState<Article | null>(null);
+
+  // Brand Modals State
+  const [isBrandModalOpen, setIsBrandModalOpen] = useState(false);
+  const [brandToEdit, setBrandToEdit] = useState<Brand | null>(null);
+  const [isBrandDeleteModalOpen, setIsBrandDeleteModalOpen] = useState(false);
+  const [brandToDelete, setBrandToDelete] = useState<Brand | null>(null);
+
 
   useEffect(() => {
     const body = document.body;
@@ -459,7 +573,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ currentUser, onLogout, onViewSite
     setProductToEdit(null);
   };
 
-  const handleAddProduct = (formData: ProductFormData) => {
+  const handleAddProductSubmit = (formData: ProductFormData) => {
     const newProduct: Product = {
         id: Date.now(),
         sku: formData.sku,
@@ -469,12 +583,12 @@ const AdminPage: React.FC<AdminPageProps> = ({ currentUser, onLogout, onViewSite
         category: formData.category,
         subCategory: formData.subCategory,
         brand: 'GymSup', // Default brand
-        inStock: formData.stock > 0,
+        inStock: formData.stockQuantity > 0,
         description: formData.description,
         rating: 0,
         reviews: 0,
         sold: 0,
-        total: formData.stock,
+        stockQuantity: formData.stockQuantity,
     };
     onAddProduct(newProduct);
     handleCloseModal();
@@ -490,7 +604,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ currentUser, onLogout, onViewSite
     setIsModalOpen(true);
   };
   
-  const handleUpdateProduct = (formData: ProductFormData) => {
+  const handleUpdateProductSubmit = (formData: ProductFormData) => {
     if (!productToEdit) return;
 
     const updatedProduct: Product = {
@@ -498,8 +612,8 @@ const AdminPage: React.FC<AdminPageProps> = ({ currentUser, onLogout, onViewSite
       sku: formData.sku,
       name: formData.name,
       price: formData.price,
-      total: formData.stock,
-      inStock: formData.stock > 0,
+      stockQuantity: formData.stockQuantity,
+      inStock: formData.stockQuantity > 0,
       images: [formData.image],
       category: formData.category,
       subCategory: formData.subCategory,
@@ -522,10 +636,61 @@ const AdminPage: React.FC<AdminPageProps> = ({ currentUser, onLogout, onViewSite
     setProductToDelete(null);
   };
 
-  const handleCancelDelete = () => {
-      setIsDeleteModalOpen(false);
-      setProductToDelete(null);
+  // Brand Modal Handlers
+  const handleAddNewBrandClick = () => {
+    setBrandToEdit(null);
+    setIsBrandModalOpen(true);
   };
+
+  const handleEditBrandClick = (brand: Brand) => {
+    setBrandToEdit(brand);
+    setIsBrandModalOpen(true);
+  };
+  
+  const handleDeleteBrandClick = (brand: Brand) => {
+    setBrandToDelete(brand);
+    setIsBrandDeleteModalOpen(true);
+  };
+  
+  const handleConfirmBrandDelete = () => {
+    if (!brandToDelete) return;
+    onDeleteBrand(brandToDelete.id);
+    setIsBrandDeleteModalOpen(false);
+    setBrandToDelete(null);
+  };
+
+  const handleCloseKnowledgeModal = () => {
+    setIsKnowledgeModalOpen(false);
+    setArticleToEdit(null);
+  };
+
+  const handleAddNewKnowledgeClick = () => {
+      setArticleToEdit(null);
+      setIsKnowledgeModalOpen(true);
+  };
+
+  const handleEditKnowledgeClick = (article: Article) => {
+      setArticleToEdit(article);
+      setIsKnowledgeModalOpen(true);
+  };
+
+  const handleDeleteKnowledgeClick = (article: Article) => {
+      setArticleToDelete(article);
+      setIsKnowledgeDeleteModalOpen(true);
+  };
+
+  const handleConfirmKnowledgeDelete = () => {
+      if (!articleToDelete) return;
+      onDeleteArticle(articleToDelete.id);
+      setIsKnowledgeDeleteModalOpen(false);
+      setArticleToDelete(null);
+  };
+
+  const handleCancelKnowledgeDelete = () => {
+      setIsKnowledgeDeleteModalOpen(false);
+      setArticleToDelete(null);
+  };
+
 
   const handleNavClick = (name: string) => {
     if (name === 'Trang Chủ') {
@@ -546,11 +711,24 @@ const AdminPage: React.FC<AdminPageProps> = ({ currentUser, onLogout, onViewSite
                     />;
         case 'Quản lý đơn hàng':
             return <OrderManagementView orders={orders} onUpdateStatus={onUpdateOrderStatus} />;
-        case 'Quản lý quảng cáo':
-            return <PromotionManagementView products={products} onToggleFeatured={onToggleFeatured} />;
-        case 'Quản lý người dùng':
-        case 'Quản lý bài viết':
-            return <ComingSoonPage title={activePage} />;
+        case 'Quản lý sản phẩm nổi bật':
+            return <FeaturedProductManagementView products={products} onToggleFeatured={onToggleFeatured} />;
+        case 'Quản lý thương hiệu':
+            return <BrandManagementView 
+                        brands={brands} 
+                        onToggleFeatured={onToggleFeaturedBrand}
+                        onAddNew={handleAddNewBrandClick}
+                        onEdit={handleEditBrandClick}
+                        onDelete={handleDeleteBrandClick}
+                    />;
+        case 'Quản lý kiến thức':
+            return <KnowledgeManagementView 
+                        supplementArticles={supplementArticles}
+                        nutritionArticles={nutritionArticles}
+                        onEdit={handleEditKnowledgeClick}
+                        onDelete={handleDeleteKnowledgeClick}
+                        onAddNew={handleAddNewKnowledgeClick}
+                    />;
         case 'Bảng điều khiển':
         default:
             return <DashboardView products={products} />;
@@ -631,15 +809,44 @@ const AdminPage: React.FC<AdminPageProps> = ({ currentUser, onLogout, onViewSite
       <AddProductModal 
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        onAddProduct={handleAddProduct}
-        onUpdateProduct={handleUpdateProduct}
+        onAddProduct={handleAddProductSubmit}
+        onUpdateProduct={handleUpdateProductSubmit}
         productToEdit={productToEdit}
       />
       <DeleteConfirmationModal 
         isOpen={isDeleteModalOpen}
-        onClose={handleCancelDelete}
+        onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleConfirmDelete}
-        productName={productToDelete?.name || ''}
+        itemName={productToDelete?.name || ''}
+        itemType="sản phẩm"
+      />
+      <AddKnowledgeModal 
+        isOpen={isKnowledgeModalOpen}
+        onClose={handleCloseKnowledgeModal}
+        onAddArticle={onAddArticle}
+        onUpdateArticle={onUpdateArticle}
+        articleToEdit={articleToEdit}
+      />
+      <DeleteConfirmationModal 
+        isOpen={isKnowledgeDeleteModalOpen}
+        onClose={handleCancelKnowledgeDelete}
+        onConfirm={handleConfirmKnowledgeDelete}
+        itemName={articleToDelete?.title || ''}
+        itemType="bài viết"
+      />
+      <AddBrandModal
+        isOpen={isBrandModalOpen}
+        onClose={() => setIsBrandModalOpen(false)}
+        onAddBrand={onAddBrand}
+        onUpdateBrand={onUpdateBrand}
+        brandToEdit={brandToEdit}
+      />
+      <DeleteConfirmationModal
+        isOpen={isBrandDeleteModalOpen}
+        onClose={() => setIsBrandDeleteModalOpen(false)}
+        onConfirm={handleConfirmBrandDelete}
+        itemName={brandToDelete?.name || ''}
+        itemType="thương hiệu"
       />
     </div>
   );

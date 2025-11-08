@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { CartProvider } from './contexts/CartContext';
-import { Product, Theme, User, Order, OrderStatus, CartItem, Review } from './types';
+import { Product, Theme, User, Order, OrderStatus, CartItem, Review, Article, Brand } from './types';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import HomePage from './components/HomePage';
@@ -10,20 +10,20 @@ import CheckoutPage from './components/CheckoutPage';
 import CartSidebar from './components/CartSidebar';
 import AuthModal from './components/AuthModal';
 import Chatbot from './components/Chatbot';
-import { navLinks, allProducts as initialProducts } from './constants';
+import { navLinks, allProducts as initialProducts, supplementArticles as initialSupplementArticles, nutritionArticles as initialNutritionArticles, brands as initialBrands } from './constants';
 import BrandsPage from './components/BrandsPage';
-import { brands } from './constants';
 import AdminPage from './components/AdminPage';
 import AccountPage from './components/AccountPage';
 import OrderHistoryPage from './components/OrderHistoryPage';
 import InfoPage from './components/InfoPage';
+import KnowledgeListPage from './components/KnowledgeListPage';
 
 // Mock Data for initial orders
 const initialOrders: Order[] = [
   {
     id: 'GS12345',
     date: '15/07/2023',
-    status: 'Đã giao hàng',
+    status: 'Hoàn thành',
     total: 1850000,
     items: [
       { ...initialProducts.find(p => p.id === 1)!, quantity: 1, size: '5Lbs', flavor: 'Double Rich Chocolate' },
@@ -45,20 +45,72 @@ const initialOrders: Order[] = [
     paymentStatus: 'Chưa thanh toán',
     paymentMethod: 'cod',
   },
+    {
+    id: 'GS12346',
+    date: '16/07/2023',
+    status: 'Đang giao hàng',
+    total: 950000,
+    items: [
+      { ...initialProducts.find(p => p.id === 7)!, quantity: 1, flavor: 'Fruit Punch' },
+    ],
+    customer: { name: 'Lê Minh', email: 'minh.le@example.com', phone: '0911111111', address: '111 Đường X, Quận Y, TP. HCM' },
+    paymentStatus: 'Đã thanh toán',
+    paymentMethod: 'card',
+  },
+  {
+    id: 'GS12347',
+    date: '17/07/2023',
+    status: 'Chờ xác nhận',
+    total: 1950000,
+    items: [
+      { ...initialProducts.find(p => p.id === 2)!, quantity: 1, size: '5Lbs', flavor: 'Chocolate Fudge' },
+    ],
+    customer: { name: 'Phạm Thị Hoa', email: 'hoa.pham@example.com', phone: '0922222222', address: '222 Đường Z, Quận W, Hà Nội' },
+    paymentStatus: 'Chưa thanh toán',
+    paymentMethod: 'cod',
+  },
+  {
+    id: 'GS12348',
+    date: '18/07/2023',
+    status: 'Đã Hủy',
+    total: 450000,
+    items: [
+      { ...initialProducts.find(p => p.id === 9)!, quantity: 1 },
+    ],
+    customer: { name: 'Hoàng Văn Nam', email: 'nam.hoang@example.com', phone: '0933333333', address: '333 Đường U, Quận V, Đà Nẵng' },
+    paymentStatus: 'Chưa thanh toán',
+    paymentMethod: 'cod',
+  },
+  {
+    id: 'GS12349',
+    date: '19/07/2023',
+    status: 'Trả hàng',
+    total: 1650000,
+    items: [
+      { ...initialProducts.find(p => p.id === 5)!, quantity: 1, flavor: 'Vanilla' },
+    ],
+    customer: { name: 'Vũ Thị Lan', email: 'lan.vu@example.com', phone: '0944444444', address: '444 Đường T, Quận S, Cần Thơ' },
+    paymentStatus: 'Đã thanh toán',
+    paymentMethod: 'card',
+  },
 ];
 
 
-type Page = 'home' | 'product' | 'category' | 'checkout' | 'brands' | 'account' | 'order-history' | 'info';
+type Page = 'home' | 'product' | 'category' | 'checkout' | 'brands' | 'account' | 'order-history' | 'info' | 'knowledge-list';
 
 const App: React.FC = () => {
   const [page, setPage] = useState<Page>('home');
   const [products, setProducts] = useState<Product[]>(initialProducts);
+  const [brands, setBrands] = useState<Brand[]>(initialBrands);
   const [orders, setOrders] = useState<Order[]>(initialOrders);
+  const [supplementArticles, setSupplementArticles] = useState<Article[]>(initialSupplementArticles);
+  const [nutritionArticles, setNutritionArticles] = useState<Article[]>(initialNutritionArticles);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
   const [theme, setTheme] = useState<Theme>('default');
   const [infoPageContent, setInfoPageContent] = useState<{title: string, content: React.ReactNode} | null>(null);
+  const [knowledgeCategory, setKnowledgeCategory] = useState<string | null>(null);
 
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -111,6 +163,74 @@ const App: React.FC = () => {
       )
     );
   }, []);
+
+  const handleAddBrand = useCallback((brandData: Omit<Brand, 'id'>) => {
+    const newBrand: Brand = {
+      ...brandData,
+      id: Date.now(),
+    };
+    setBrands(prev => [newBrand, ...prev]);
+  }, []);
+
+  const handleUpdateBrand = useCallback((updatedBrand: Brand) => {
+    setBrands(prev => prev.map(b => b.id === updatedBrand.id ? updatedBrand : b));
+  }, []);
+
+  const handleDeleteBrand = useCallback((brandId: number) => {
+    setBrands(prev => prev.filter(b => b.id !== brandId));
+  }, []);
+
+  const handleToggleFeaturedBrand = useCallback((brandId: number) => {
+    setBrands(prevBrands => 
+      prevBrands.map(b => 
+        b.id === brandId ? { ...b, isFeatured: !b.isFeatured } : b
+      )
+    );
+  }, []);
+
+  const handleAddArticle = useCallback((articleData: Omit<Article, 'id' | 'date'>) => {
+    const newArticle: Article = {
+        ...articleData,
+        id: Date.now(),
+        date: new Date().toLocaleDateString('vi-VN'),
+    };
+
+    if (newArticle.category === 'Kiến thức Supplement') {
+        setSupplementArticles(prev => [newArticle, ...prev]);
+    } else {
+        setNutritionArticles(prev => [newArticle, ...prev]);
+    }
+  }, []);
+
+  const handleUpdateArticle = useCallback((updatedArticle: Article) => {
+      const updateList = (list: Article[]) => list.map(a => a.id === updatedArticle.id ? updatedArticle : a);
+      
+      const oldArticle = [...supplementArticles, ...nutritionArticles].find(a => a.id === updatedArticle.id);
+
+      if (oldArticle?.category !== updatedArticle.category) {
+          // Category changed, remove from old list and add to new
+          if (oldArticle?.category === 'Kiến thức Supplement') {
+              setSupplementArticles(prev => prev.filter(a => a.id !== updatedArticle.id));
+              setNutritionArticles(prev => [updatedArticle, ...prev]);
+          } else {
+              setNutritionArticles(prev => prev.filter(a => a.id !== updatedArticle.id));
+              setSupplementArticles(prev => [updatedArticle, ...prev]);
+          }
+      } else {
+          // Category is the same, just update in place
+          if (updatedArticle.category === 'Kiến thức Supplement') {
+              setSupplementArticles(updateList);
+          } else {
+              setNutritionArticles(updateList);
+          }
+      }
+  }, [supplementArticles, nutritionArticles]);
+
+  const handleDeleteArticle = useCallback((articleId: number) => {
+      setSupplementArticles(prev => prev.filter(a => a.id !== articleId));
+      setNutritionArticles(prev => prev.filter(a => a.id !== articleId));
+  }, []);
+
 
   const handlePlaceOrder = useCallback((orderDetails: Omit<Order, 'id' | 'date' | 'status'>) => {
     const newOrder: Order = {
@@ -196,6 +316,7 @@ const App: React.FC = () => {
     setSelectedProduct(null);
     setSelectedCategory(null);
     setSelectedBrand(null);
+    setKnowledgeCategory(null);
     window.scrollTo(0, 0);
   }, []);
 
@@ -256,6 +377,12 @@ const App: React.FC = () => {
     setPage('info');
     window.scrollTo(0, 0);
   }, []);
+  
+  const handleViewAllKnowledge = useCallback((categoryTitle: string) => {
+    setKnowledgeCategory(categoryTitle);
+    setPage('knowledge-list');
+    window.scrollTo(0, 0);
+  }, []);
 
   const renderPage = () => {
     switch (page) {
@@ -279,17 +406,37 @@ const App: React.FC = () => {
       case 'checkout':
         return <CheckoutPage onBackToShop={handleGoHome} onPlaceOrder={handlePlaceOrder} />;
       case 'brands':
-        return <BrandsPage brands={brands} onBack={handleGoHome} onBrandSelect={handleBrandSelect} />;
+        return <BrandsPage brands={initialBrands} onBack={handleGoHome} onBrandSelect={handleBrandSelect} />;
       case 'account':
         return <AccountPage currentUser={currentUser!} onBack={handleGoHome} />;
       case 'order-history':
         return <OrderHistoryPage onBack={handleGoHome} orders={orders} />;
       case 'info':
         return <InfoPage title={infoPageContent!.title} onBack={handleGoHome}>{infoPageContent!.content}</InfoPage>;
+      case 'knowledge-list':
+        const articles = knowledgeCategory === 'Kiến thức Supplement' 
+            ? supplementArticles 
+            : nutritionArticles;
+        return <KnowledgeListPage 
+            title={knowledgeCategory!} 
+            articles={articles} 
+            onBack={handleGoHome} 
+        />;
       case 'home':
       default:
         const featuredProducts = products.filter(p => p.isFeatured);
-        return <HomePage products={products} featuredProducts={featuredProducts} onProductSelect={handleProductSelect} onCategorySelect={handleCategorySelect} />;
+        const featuredBrands = brands.filter(b => b.isFeatured);
+        return <HomePage 
+                  products={products} 
+                  featuredProducts={featuredProducts} 
+                  onProductSelect={handleProductSelect} 
+                  onCategorySelect={handleCategorySelect} 
+                  onViewAllKnowledge={handleViewAllKnowledge} 
+                  supplementArticles={supplementArticles}
+                  nutritionArticles={nutritionArticles}
+                  featuredBrands={featuredBrands}
+                  onBrandSelect={handleBrandSelect}
+                />;
     }
   };
 
@@ -303,8 +450,18 @@ const App: React.FC = () => {
         onUpdateProduct={handleUpdateProduct}
         onDeleteProduct={handleDeleteProduct}
         onToggleFeatured={handleToggleFeaturedProduct}
+        brands={brands}
+        onAddBrand={handleAddBrand}
+        onUpdateBrand={handleUpdateBrand}
+        onDeleteBrand={handleDeleteBrand}
+        onToggleFeaturedBrand={handleToggleFeaturedBrand}
         orders={orders}
         onUpdateOrderStatus={handleUpdateOrderStatus}
+        supplementArticles={supplementArticles}
+        nutritionArticles={nutritionArticles}
+        onAddArticle={handleAddArticle}
+        onUpdateArticle={handleUpdateArticle}
+        onDeleteArticle={handleDeleteArticle}
     />;
   }
 
@@ -337,6 +494,7 @@ const App: React.FC = () => {
             onCheckout={handleCheckout} 
         />
         <AuthModal 
+// FIX: Corrected typo from isIsAuthModalOpen to isAuthModalOpen.
             isOpen={isAuthModalOpen} 
             onClose={() => setIsAuthModalOpen(false)} 
             onLoginSuccess={handleLoginSuccess}
