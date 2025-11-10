@@ -175,6 +175,31 @@ const App: React.FC = () => {
       setHistory(prev => prev.slice(0, -1));
     }
   }, [history.length]);
+  
+  const handleReturnToHome = useCallback(() => {
+    setHistory(prev => {
+        // Find the index of the last occurrence of the home page in history.
+        const lastHomeIndex = prev.map(s => s.page).lastIndexOf('home');
+
+        // If a 'home' state is found in the history stack (it always should be, at least at index 0)
+        if (lastHomeIndex !== -1) {
+            // Truncate the history array to end at that home state.
+            // This makes it the current state, preserving its scroll position.
+            return prev.slice(0, lastHomeIndex + 1);
+        }
+
+        // As a fallback in an unexpected scenario where no home state is found,
+        // reset to a clean home state.
+        return [{
+            page: 'home',
+            selectedProduct: null,
+            listFilter: null,
+            infoPageContent: null,
+            knowledgeCategory: null,
+            scrollPosition: 0,
+        }];
+    });
+  }, []);
 
   const totalRevenue = useMemo(() => {
     return orders.reduce((acc, order) => {
@@ -493,6 +518,7 @@ const App: React.FC = () => {
         knowledgeCategory: null,
         scrollPosition: 0,
     }]);
+    window.scrollTo(0, 0);
   }, []);
   
   const handleProductSelect = useCallback((product: Product) => {
@@ -544,7 +570,7 @@ const App: React.FC = () => {
   const handleViewAllKnowledge = useCallback((categoryTitle: string) => {
     navigateTo({ page: 'knowledge-list', knowledgeCategory: categoryTitle });
   }, []);
-
+  
   const handleBrandsPageClick = useCallback(() => {
     navigateTo({ page: 'brands' });
   }, []);
@@ -565,15 +591,15 @@ const App: React.FC = () => {
                   onOpenQuickAddModal={handleOpenQuickAddModal}
                />;
       case 'category':
-        return <CategoryPage products={products} filterBy={listFilter!} onProductSelect={handleProductSelect} onGoHome={handleGoHome} onOpenQuickAddModal={handleOpenQuickAddModal} />;
+        return <CategoryPage products={products} filterBy={listFilter!} onProductSelect={handleProductSelect} onGoHome={handleReturnToHome} onOpenQuickAddModal={handleOpenQuickAddModal} />;
       case 'checkout':
-        return <CheckoutPage onBackToShop={handleGoHome} onPlaceOrder={handlePlaceOrder} />;
+        return <CheckoutPage onBackToShop={handleBack} onPlaceOrder={handlePlaceOrder} />;
       case 'account':
-        return <AccountPage currentUser={currentUser!} onGoHome={handleGoHome} />;
+        return <AccountPage currentUser={currentUser!} onGoHome={handleReturnToHome} />;
       case 'order-history':
-        return <OrderHistoryPage onGoHome={handleGoHome} orders={orders} onCancelOrder={handleCancelOrder} />;
+        return <OrderHistoryPage onGoHome={handleReturnToHome} orders={orders} onCancelOrder={handleCancelOrder} />;
       case 'info':
-        return <InfoPage title={infoPageContent!.title} onGoHome={handleGoHome}>{infoPageContent!.content}</InfoPage>;
+        return <InfoPage title={infoPageContent!.title} onGoHome={handleReturnToHome}>{infoPageContent!.content}</InfoPage>;
       case 'knowledge-list':
         const articles = knowledgeCategory === 'Kiến thức Supplement' 
             ? supplementArticles 
@@ -581,10 +607,10 @@ const App: React.FC = () => {
         return <KnowledgeListPage 
             title={knowledgeCategory!} 
             articles={articles} 
-            onGoHome={handleGoHome} 
+            onGoHome={handleReturnToHome} 
         />;
       case 'brands':
-        return <BrandsPage brands={brands} onGoHome={handleGoHome} onBrandSelect={(brandName) => handleListFilterSelect({ type: 'brand', value: brandName })} />;
+        return <BrandsPage brands={brands} onGoHome={handleReturnToHome} onBrandSelect={(brandName) => handleListFilterSelect({ type: 'brand', value: brandName })} />;
       case 'home':
       default:
         const featuredProducts = products.filter(p => p.isFeatured);

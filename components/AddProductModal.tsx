@@ -4,7 +4,8 @@ import { Product, Brand } from '../types';
 export interface ProductFormData {
     sku: string;
     name: string;
-    price: number;
+    originalPrice: number;
+    discountPercentage: number;
     stockQuantity: number;
     image: string;
     category: string;
@@ -41,7 +42,8 @@ const subCategoryMap: { [key: string]: string[] } = {
 const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAddProduct, onUpdateProduct, productToEdit, brands }) => {
   const [sku, setSku] = useState('');
   const [name, setName] = useState('');
-  const [price, setPrice] = useState('');
+  const [originalPrice, setOriginalPrice] = useState('');
+  const [discountPercentage, setDiscountPercentage] = useState('');
   const [stockQuantity, setStockQuantity] = useState('');
   const [image, setImage] = useState('');
   const [category, setCategory] = useState('');
@@ -57,7 +59,8 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
         if (isEditMode && productToEdit) {
             setSku(productToEdit.sku || '');
             setName(productToEdit.name);
-            setPrice(String(productToEdit.price));
+            setOriginalPrice(String(productToEdit.oldPrice || productToEdit.price));
+            setDiscountPercentage(String(productToEdit.discountPercentage || ''));
             setStockQuantity(String(productToEdit.stockQuantity || 0));
             setImage(productToEdit.images[0] || '');
             setCategory(productToEdit.category);
@@ -67,7 +70,8 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
         } else {
             setSku('');
             setName('');
-            setPrice('');
+            setOriginalPrice('');
+            setDiscountPercentage('');
             setStockQuantity('');
             setImage('');
             setCategory('');
@@ -93,9 +97,13 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
 
     if (!sku.trim()) { setError('SKU sản phẩm là bắt buộc.'); return; }
     if (!name.trim()) { setError('Tên sản phẩm là bắt buộc.'); return; }
-    if (!price.trim()) { setError('Giá sản phẩm là bắt buộc.'); return; }
-    const priceNum = parseFloat(price);
+    if (!originalPrice.trim()) { setError('Giá sản phẩm là bắt buộc.'); return; }
+    const priceNum = parseFloat(originalPrice);
     if (isNaN(priceNum) || priceNum <= 0) { setError('Giá phải là một số dương hợp lệ.'); return; }
+    
+    const discountNum = discountPercentage ? parseFloat(discountPercentage) : 0;
+    if (isNaN(discountNum) || discountNum < 0 || discountNum > 100) { setError('Giảm giá phải là số từ 0 đến 100.'); return; }
+
     if (!stockQuantity.trim()) { setError('Số lượng tồn kho là bắt buộc.'); return; }
     const stockNum = parseFloat(stockQuantity);
     if (isNaN(stockNum) || !Number.isInteger(stockNum) || stockNum < 0) { setError('Tồn kho phải là một số nguyên không âm.'); return; }
@@ -110,7 +118,8 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
     const productData: ProductFormData = {
       sku: sku.trim(),
       name: name.trim(),
-      price: priceNum,
+      originalPrice: priceNum,
+      discountPercentage: discountNum,
       stockQuantity: stockNum,
       image: image.trim(),
       category: category,
@@ -182,9 +191,15 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
           )}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="productPrice" className="block text-sm font-medium text-[var(--admin-text-secondary)] mb-1">Giá (đ)</label>
-              <input type="text" id="productPrice" value={price} onChange={e => setPrice(e.target.value)} className={inputStyles} placeholder="ví dụ: 1850000" />
+              <label htmlFor="productPrice" className="block text-sm font-medium text-[var(--admin-text-secondary)] mb-1">Giá gốc (đ)</label>
+              <input type="text" id="productPrice" value={originalPrice} onChange={e => setOriginalPrice(e.target.value)} className={inputStyles} placeholder="ví dụ: 1850000" />
             </div>
+            <div>
+              <label htmlFor="productDiscount" className="block text-sm font-medium text-[var(--admin-text-secondary)] mb-1">Giảm giá (%)</label>
+              <input type="text" id="productDiscount" value={discountPercentage} onChange={e => setDiscountPercentage(e.target.value)} className={inputStyles} placeholder="ví dụ: 10"/>
+            </div>
+          </div>
+           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label htmlFor="productStock" className="block text-sm font-medium text-[var(--admin-text-secondary)] mb-1">Tồn kho</label>
               <input type="text" id="productStock" value={stockQuantity} onChange={e => setStockQuantity(e.target.value)} className={inputStyles} placeholder="ví dụ: 150"/>

@@ -14,6 +14,7 @@ export interface Product {
   images: string[]; // Changed from image to images
   price: number;
   oldPrice?: number;
+  discountPercentage?: number;
   rating: number;
   reviews: number;
   sold?: number;

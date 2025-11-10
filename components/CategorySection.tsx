@@ -79,7 +79,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({ title, categoryKey, s
         <h2 className="text-3xl font-extrabold uppercase text-white tracking-wider mb-2">{title}</h2>
         <div className="flex justify-center flex-wrap gap-x-4 gap-y-2">
           {subCategories.map(sub => (
-            <button key={sub} onClick={() => onCategorySelect(categoryKey)} className="text-gym-gray hover:text-gym-yellow transition-colors">{sub}</button>
+            <button key={sub} onClick={() => onCategorySelect(sub)} className="text-gym-gray hover:text-gym-yellow transition-colors">{sub}</button>
           ))}
         </div>
       </div>

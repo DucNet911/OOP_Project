@@ -5,31 +5,17 @@ import ProductCard from './ProductCard';
 import ProductFilters from './ProductFilters';
 import Breadcrumbs from './Breadcrumbs';
 
-interface CategoryPageProps {
+interface TrendingPageProps {
   products: Product[];
-  filterBy: { type: 'category' | 'brand'; value: string };
   onProductSelect: (product: Product) => void;
   onGoHome: () => void;
   onOpenQuickAddModal: (product: Product) => void;
 }
 
-const CategoryPage: React.FC<CategoryPageProps> = ({ products, filterBy, onProductSelect, onGoHome, onOpenQuickAddModal }) => {
-  const pageTitle = filterBy.value;
+const TrendingPage: React.FC<TrendingPageProps> = ({ products, onProductSelect, onGoHome, onOpenQuickAddModal }) => {
+  const pageTitle = "Sản phẩm Trending";
   
-  const initialProducts = useMemo(() => {
-    if (filterBy.type === 'brand') {
-      return products.filter(p => p.brand === filterBy.value);
-    }
-    
-    // Check for subcategory match first
-    const subCategoryProducts = products.filter(p => p.subCategory && p.subCategory === filterBy.value);
-    if (subCategoryProducts.length > 0) {
-        return subCategoryProducts;
-    }
-
-    // Fallback to main category
-    return products.filter(p => p.category === filterBy.value);
-  }, [filterBy, products]);
+  const initialProducts = products; // Directly use the products prop
 
   const priceBounds = useMemo(() => {
     if (initialProducts.length === 0) return { min: 0, max: 5000000 };
@@ -54,7 +40,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ products, filterBy, onProdu
 
   useEffect(() => {
     resetFilters();
-  }, [filterBy]);
+  }, [products]);
   
   useEffect(() => {
     setMaxPrice(priceBounds.max);
@@ -81,8 +67,6 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ products, filterBy, onProdu
       }
     });
   }, [initialProducts, maxPrice, selectedRating, showInStockOnly, sortOption]);
-
-  const displayedProducts = filteredAndSortedProducts.slice(0, 6);
 
   const activeFilterCount =
     (maxPrice < priceBounds.max ? 1 : 0) +
@@ -112,7 +96,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ products, filterBy, onProdu
         <div className="lg:col-span-3">
           <div className="flex flex-col sm:flex-row justify-between items-center mb-4 bg-gym-dark p-3 rounded-lg">
             <p className="text-sm text-gym-gray mb-2 sm:mb-0">
-              Hiển thị <span className="font-bold text-white">{displayedProducts.length}</span> trên <span className="font-bold text-white">{filteredAndSortedProducts.length}</span> sản phẩm
+              Hiển thị <span className="font-bold text-white">{filteredAndSortedProducts.length}</span> trên <span className="font-bold text-white">{initialProducts.length}</span> sản phẩm
             </p>
             <div className="flex items-center space-x-2">
               <label htmlFor="sort-by" className="text-sm text-gym-gray">Sắp xếp theo:</label>
@@ -128,9 +112,9 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ products, filterBy, onProdu
               </select>
             </div>
           </div>
-          {displayedProducts.length > 0 ? (
+          {filteredAndSortedProducts.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-              {displayedProducts.map(product => (
+              {filteredAndSortedProducts.map(product => (
                 <ProductCard key={product.id} product={product} onProductSelect={onProductSelect} onOpenQuickAddModal={onOpenQuickAddModal} />
               ))}
             </div>
@@ -146,4 +130,4 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ products, filterBy, onProdu
   );
 };
 
-export default CategoryPage;
+export default TrendingPage;

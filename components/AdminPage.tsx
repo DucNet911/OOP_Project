@@ -83,7 +83,8 @@ const navItems = [
 export interface ProductFormData {
     sku: string;
     name: string;
-    price: number;
+    originalPrice: number;
+    discountPercentage: number;
     stockQuantity: number;
     image: string;
     category: string;
@@ -620,12 +621,17 @@ const AdminPage: React.FC<AdminPageProps> = ({
   };
 
   const handleAddProductSubmit = (formData: ProductFormData) => {
+    const finalPrice = formData.discountPercentage > 0 ? formData.originalPrice * (1 - formData.discountPercentage / 100) : formData.originalPrice;
+    const oldPrice = formData.discountPercentage > 0 ? formData.originalPrice : undefined;
+
     const newProduct: Product = {
         id: Date.now(),
         sku: formData.sku,
         name: formData.name,
         images: [formData.image],
-        price: formData.price,
+        price: Math.round(finalPrice),
+        oldPrice: oldPrice,
+        discountPercentage: formData.discountPercentage > 0 ? formData.discountPercentage : undefined,
         category: formData.category,
         subCategory: formData.subCategory,
         brand: formData.brand,
@@ -653,11 +659,16 @@ const AdminPage: React.FC<AdminPageProps> = ({
   const handleUpdateProductSubmit = (formData: ProductFormData) => {
     if (!productToEdit) return;
 
+    const finalPrice = formData.discountPercentage > 0 ? formData.originalPrice * (1 - formData.discountPercentage / 100) : formData.originalPrice;
+    const oldPrice = formData.discountPercentage > 0 ? formData.originalPrice : undefined;
+
     const updatedProduct: Product = {
       ...productToEdit,
       sku: formData.sku,
       name: formData.name,
-      price: formData.price,
+      price: Math.round(finalPrice),
+      oldPrice: oldPrice,
+      discountPercentage: formData.discountPercentage > 0 ? formData.discountPercentage : undefined,
       stockQuantity: formData.stockQuantity,
       inStock: formData.stockQuantity > 0,
       images: [formData.image],

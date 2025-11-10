@@ -17,9 +17,12 @@ interface HomePageProps {
 }
 
 const HomePage: React.FC<HomePageProps> = ({ products, featuredProducts, onProductSelect, onCategorySelect, onViewAllKnowledge, supplementArticles, nutritionArticles, onOpenQuickAddModal }) => {
-  const trendingProducts = products.slice(0, 8);
+  const trendingProducts = [...products]
+    .sort((a, b) => (b.sold || 0) - (a.sold || 0))
+    .slice(0, 12);
   const wheyProducts = products.filter(p => p.category === 'Whey Protein').slice(0, 6);
   const strengthProducts = products.filter(p => p.category === 'Tăng sức mạnh').slice(0, 6);
+  const healthProducts = products.filter(p => p.category === 'Hỗ trợ sức khỏe').slice(0, 6);
 
   return (
     <>
@@ -40,6 +43,15 @@ const HomePage: React.FC<HomePageProps> = ({ products, featuredProducts, onProdu
           categoryKey="Tăng sức mạnh"
           subCategories={['Pre-Workout', 'Creatine', 'BCAAs']}
           products={strengthProducts}
+          onProductSelect={onProductSelect}
+          onCategorySelect={onCategorySelect}
+          onOpenQuickAddModal={onOpenQuickAddModal}
+        />
+        <CategorySection 
+          title="HỖ TRỢ SỨC KHỎE"
+          categoryKey="Hỗ trợ sức khỏe"
+          subCategories={['Vitamin', 'Dầu cá & Omega 3', 'Hỗ trợ xương khớp']}
+          products={healthProducts}
           onProductSelect={onProductSelect}
           onCategorySelect={onCategorySelect}
           onOpenQuickAddModal={onOpenQuickAddModal}
