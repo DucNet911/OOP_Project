@@ -9,10 +9,11 @@ interface CategoryPageProps {
   products: Product[];
   filterBy: { type: 'category' | 'brand'; value: string };
   onProductSelect: (product: Product) => void;
-  onBack: () => void;
+  onGoHome: () => void;
+  onOpenQuickAddModal: (product: Product) => void;
 }
 
-const CategoryPage: React.FC<CategoryPageProps> = ({ products, filterBy, onProductSelect, onBack }) => {
+const CategoryPage: React.FC<CategoryPageProps> = ({ products, filterBy, onProductSelect, onGoHome, onOpenQuickAddModal }) => {
   const pageTitle = filterBy.value;
   
   const initialProducts = useMemo(() => {
@@ -88,7 +89,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ products, filterBy, onProdu
 
   return (
     <div className="container mx-auto px-4 py-12">
-      <Breadcrumbs items={[{ label: 'Trang chủ', onClick: onBack }, { label: pageTitle }]} />
+      <Breadcrumbs items={[{ label: 'Trang chủ', onClick: onGoHome }, { label: pageTitle }]} />
       <div className="text-center mb-8">
         <h1 className="text-3xl font-extrabold uppercase text-white tracking-wider">{pageTitle}</h1>
       </div>
@@ -128,7 +129,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ products, filterBy, onProdu
           {filteredAndSortedProducts.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
               {filteredAndSortedProducts.map(product => (
-                <ProductCard key={product.id} product={product} onProductSelect={onProductSelect} />
+                <ProductCard key={product.id} product={product} onProductSelect={onProductSelect} onOpenQuickAddModal={onOpenQuickAddModal} />
               ))}
             </div>
           ) : (

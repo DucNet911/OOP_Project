@@ -10,7 +10,7 @@ interface FlashSaleProps {
 const FlashSaleCard: React.FC<{ product: Product, onProductSelect: (product: Product) => void }> = ({ product, onProductSelect }) => {
   const { addToCart } = useCart();
   const [isAdding, setIsAdding] = useState(false);
-  const percentageSold = product.sold && product.total ? (product.sold / product.total) * 100 : 0;
+  const percentageSold = product.sold && product.stockQuantity ? (product.sold / product.stockQuantity) * 100 : 0;
   
   const handleAddToCartClick = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click from firing

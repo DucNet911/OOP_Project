@@ -17,7 +17,7 @@ export interface Product {
   rating: number;
   reviews: number;
   sold?: number;
-  total?: number;
+  stockQuantity?: number;
   category: string;
   subCategory?: string;
   brand: string;
@@ -29,16 +29,17 @@ export interface Product {
   isFeatured?: boolean;
 }
 
-export interface CartItem extends Product {
-  quantity: number;
-  size?: string;
-  flavor?: string;
-}
-
 export interface Brand {
   id: number;
   name: string;
   logo: string;
+  isFeatured: boolean;
+}
+
+export interface CartItem extends Product {
+  quantity: number;
+  size?: string;
+  flavor?: string;
 }
 
 export interface Article {
@@ -82,7 +83,7 @@ export interface User {
   role: 'customer' | 'admin';
 }
 
-export type OrderStatus = 'Đã giao hàng' | 'Đang xử lý' | 'Đã hủy';
+export type OrderStatus = "Chờ xác nhận" | "Đang xử lý" | "Đang giao hàng" | "Hoàn thành" | "Đã Hủy" | "Trả hàng";
 export type PaymentStatus = 'Chưa thanh toán' | 'Đã thanh toán';
 
 export interface Order {

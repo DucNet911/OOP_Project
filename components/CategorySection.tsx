@@ -11,9 +11,10 @@ interface CategorySectionProps {
   products: Product[];
   onProductSelect: (product: Product) => void;
   onCategorySelect: (category: string) => void;
+  onOpenQuickAddModal: (product: Product) => void;
 }
 
-const CategorySection: React.FC<CategorySectionProps> = ({ title, categoryKey, subCategories, products, onProductSelect, onCategorySelect }) => {
+const CategorySection: React.FC<CategorySectionProps> = ({ title, categoryKey, subCategories, products, onProductSelect, onCategorySelect, onOpenQuickAddModal }) => {
   // Determine price bounds once from the initial product list
   const priceBounds = useMemo(() => {
     if (products.length === 0) return { min: 0, max: 5000000 };
@@ -123,7 +124,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({ title, categoryKey, s
           {filteredAndSortedProducts.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
               {filteredAndSortedProducts.map(product => (
-                <ProductCard key={product.id} product={product} onProductSelect={onProductSelect} />
+                <ProductCard key={product.id} product={product} onProductSelect={onProductSelect} onOpenQuickAddModal={onOpenQuickAddModal} />
               ))}
             </div>
           ) : (

@@ -18,6 +18,7 @@ interface HeaderProps {
   onOrderHistoryClick: () => void;
   isAdminViewingSite: boolean;
   onReturnToAdmin: () => void;
+  onBrandsPageClick: () => void;
 }
 
 const SearchIcon: React.FC<{className?: string}> = ({className}) => (
@@ -46,7 +47,7 @@ const PaletteIcon: React.FC<{className?: string}> = ({className}) => (
 );
 
 
-const Header: React.FC<HeaderProps> = ({ navLinks, products, onCartClick, onAuthClick, onCategorySelect, onProductSelect, onLogoClick, theme, setTheme, currentUser, onLogout, onAccountClick, onOrderHistoryClick, isAdminViewingSite, onReturnToAdmin }) => {
+const Header: React.FC<HeaderProps> = ({ navLinks, products, onCartClick, onAuthClick, onCategorySelect, onProductSelect, onLogoClick, theme, setTheme, currentUser, onLogout, onAccountClick, onOrderHistoryClick, isAdminViewingSite, onReturnToAdmin, onBrandsPageClick }) => {
   const { itemCount } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -86,10 +87,12 @@ const Header: React.FC<HeaderProps> = ({ navLinks, products, onCartClick, onAuth
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleNavLinkClick = (category?: string) => {
+  const handleNavLinkClick = (category: string) => {
     if (category === 'Trang chủ') {
       onLogoClick();
-    } else if (category) {
+    } else if (category === 'Thương hiệu') {
+      onBrandsPageClick();
+    } else {
       onCategorySelect(category);
     }
   };

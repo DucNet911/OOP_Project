@@ -43,6 +43,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
+      .text-force-white {
+        color: #ffffff !important;
+      }
       /* Main Site Theme Overrides */
       .theme-light {
         --bg-main: #f9fafb; /* gray-50 */
@@ -80,6 +83,14 @@
       .theme-black .bg-gym-darker { background-color: var(--bg-header) !important; }
       .theme-black .bg-gym-dark { background-color: var(--bg-card) !important; }
       
+      .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+      }
+      .scrollbar-hide {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+      }
+
       /* Admin Panel Theme Variables */
       body {
         --admin-bg-main: #111111;

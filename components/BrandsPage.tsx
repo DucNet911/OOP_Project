@@ -4,14 +4,14 @@ import Breadcrumbs from './Breadcrumbs';
 
 interface BrandsPageProps {
   brands: Brand[];
-  onBack: () => void;
+  onGoHome: () => void;
   onBrandSelect: (brandName: string) => void;
 }
 
-const BrandsPage: React.FC<BrandsPageProps> = ({ brands, onBack, onBrandSelect }) => {
+const BrandsPage: React.FC<BrandsPageProps> = ({ brands, onGoHome, onBrandSelect }) => {
   return (
     <div className="container mx-auto px-4 py-12">
-      <Breadcrumbs items={[{ label: 'Trang chủ', onClick: onBack }, { label: 'Thương hiệu' }]} />
+      <Breadcrumbs items={[{ label: 'Trang chủ', onClick: onGoHome }, { label: 'Thương hiệu' }]} />
       <div className="text-center mb-10">
         <h1 className="text-4xl font-extrabold uppercase text-white tracking-wider">Thương hiệu nổi bật</h1>
         <p className="text-gym-gray mt-2">Các thương hiệu thực phẩm bổ sung hàng đầu thế giới, được tin dùng bởi các vận động viên chuyên nghiệp.</p>
