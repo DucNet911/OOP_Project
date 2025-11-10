@@ -4,10 +4,10 @@ import Breadcrumbs from './Breadcrumbs';
 
 interface AccountPageProps {
   currentUser: User;
-  onBack: () => void;
+  onGoHome: () => void;
 }
 
-const AccountPage: React.FC<AccountPageProps> = ({ currentUser, onBack }) => {
+const AccountPage: React.FC<AccountPageProps> = ({ currentUser, onGoHome }) => {
   const [fullName, setFullName] = useState(currentUser.name);
   const [email, setEmail] = useState(currentUser.name.toLowerCase().replace(' ','.') + '.vip234@email.com'); // Simulated email
   const [phone, setPhone] = useState('0987654321'); // Simulated phone
@@ -52,7 +52,7 @@ const AccountPage: React.FC<AccountPageProps> = ({ currentUser, onBack }) => {
   
   return (
     <div className="container mx-auto px-4 py-12">
-      <Breadcrumbs items={[{ label: 'Trang chủ', onClick: onBack }, { label: 'Tài khoản của tôi' }]} />
+      <Breadcrumbs items={[{ label: 'Trang chủ', onClick: onGoHome }, { label: 'Tài khoản của tôi' }]} />
       <div className="max-w-3xl mx-auto">
         <h1 className="text-4xl font-extrabold text-white tracking-wider text-center mb-10 uppercase">Tài khoản của tôi</h1>
 

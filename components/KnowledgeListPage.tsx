@@ -6,13 +6,13 @@ import ArticleCard from './ArticleCard';
 interface KnowledgeListPageProps {
   title: string;
   articles: Article[];
-  onBack: () => void;
+  onGoHome: () => void;
 }
 
-const KnowledgeListPage: React.FC<KnowledgeListPageProps> = ({ title, articles, onBack }) => {
+const KnowledgeListPage: React.FC<KnowledgeListPageProps> = ({ title, articles, onGoHome }) => {
   return (
     <div className="container mx-auto px-4 py-12">
-      <Breadcrumbs items={[{ label: 'Trang chủ', onClick: onBack }, { label: title }]} />
+      <Breadcrumbs items={[{ label: 'Trang chủ', onClick: onGoHome }, { label: title }]} />
       <div className="text-center mb-10">
         <h1 className="text-4xl font-extrabold uppercase text-white tracking-wider">{title}</h1>
       </div>

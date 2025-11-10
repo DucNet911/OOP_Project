@@ -3,7 +3,6 @@ import { Product, User, Review } from '../types';
 import { StarIcon } from '../constants';
 import { useCart } from '../contexts/CartContext';
 import ProductReviews from './ProductReviews';
-import Breadcrumbs from './Breadcrumbs';
 import RelatedProducts from './RelatedProducts';
 
 interface ProductPageProps {
@@ -15,10 +14,17 @@ interface ProductPageProps {
   onAddReview: (productId: number, review: Omit<Review, 'id' | 'date'>) => void;
   onAuthClick: () => void;
   onStockSubscribe: (productId: number, email: string) => void;
-  onCategorySelect: (category: string) => void;
+  onCategorySelect: (filter: { type: 'category' | 'brand', value: string }) => void;
+  onOpenQuickAddModal: (product: Product) => void;
 }
 
-const ProductPage: React.FC<ProductPageProps> = ({ product, allProducts, onProductSelect, onBack, currentUser, onAddReview, onAuthClick, onStockSubscribe, onCategorySelect }) => {
+const BackIcon: React.FC<{className?: string}> = ({className}) => (
+    <svg className={className} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+    </svg>
+  );
+
+const ProductPage: React.FC<ProductPageProps> = ({ product, allProducts, onProductSelect, onBack, currentUser, onAddReview, onAuthClick, onStockSubscribe, onCategorySelect, onOpenQuickAddModal }) => {
   const [mainImage, setMainImage] = useState(product.images[0]);
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState(product.sizes ? product.sizes[0] : undefined);
@@ -72,8 +78,6 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, allProducts, onProdu
       setIsSubscribed(true);
     }
   };
-  
-  const truncatedName = product.name.length > 50 ? `${product.name.substring(0, 50)}...` : product.name;
 
   const relatedProducts = allProducts
     .filter(p => p.category === product.category && p.id !== product.id)
@@ -81,11 +85,12 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, allProducts, onProdu
 
   return (
     <div className="container mx-auto px-4 py-12">
-      <Breadcrumbs items={[
-        { label: 'Trang chủ', onClick: onBack },
-        { label: product.category, onClick: () => onCategorySelect(product.category) },
-        { label: truncatedName }
-      ]} />
+      <nav className="mb-8">
+        <button onClick={onBack} className="flex items-center space-x-2 text-sm text-gym-gray hover:text-gym-yellow transition-colors">
+            <BackIcon className="h-4 w-4" />
+            <span>Quay lại trang trước</span>
+        </button>
+      </nav>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
         {/* Image Gallery */}
         <div>
@@ -216,7 +221,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, allProducts, onProdu
       />
 
       {/* Related Products Section */}
-      <RelatedProducts products={relatedProducts} onProductSelect={onProductSelect} />
+      <RelatedProducts products={relatedProducts} onProductSelect={onProductSelect} onOpenQuickAddModal={onOpenQuickAddModal} />
     </div>
   );
 };

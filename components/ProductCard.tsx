@@ -6,9 +6,10 @@ import { useCart } from '../contexts/CartContext';
 interface ProductCardProps {
   product: Product;
   onProductSelect: (product: Product) => void;
+  onOpenQuickAddModal: (product: Product) => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, onProductSelect }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product, onProductSelect, onOpenQuickAddModal }) => {
   const { addToCart } = useCart();
   const [isAdding, setIsAdding] = useState(false);
 
@@ -21,10 +22,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductSelect }) =
   };
 
   const handleAddToCart = () => {
-    if (isAdding) return;
-    setIsAdding(true);
-    addToCart({ ...product, quantity: 1 });
-    setTimeout(() => setIsAdding(false), 1000);
+    // If product has options, open the quick add modal
+    if (product.sizes || product.flavors) {
+      onOpenQuickAddModal(product);
+    } else {
+      // Otherwise, add directly to cart
+      if (isAdding) return;
+      setIsAdding(true);
+      addToCart({ ...product, quantity: 1 });
+      setTimeout(() => setIsAdding(false), 1000);
+    }
   };
 
   return (
@@ -77,10 +84,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductSelect }) =
         </div>
         <button 
           onClick={handleAddToCart}
-          disabled={isAdding}
-          className={`mt-auto w-full bg-gym-yellow text-gym-darker font-bold py-2 rounded-md hover:bg-yellow-300 transition-colors duration-300 transform group-hover:scale-105 disabled:opacity-75 disabled:cursor-wait ${isAdding ? 'animate-cart-bump' : ''}`}
+          disabled={isAdding && !(product.sizes || product.flavors)}
+          className={`mt-auto w-full bg-gym-yellow text-gym-darker font-bold py-2 rounded-md hover:bg-yellow-300 transition-colors duration-300 transform group-hover:scale-105 disabled:opacity-75 disabled:cursor-wait ${isAdding && !(product.sizes || product.flavors) ? 'animate-cart-bump' : ''}`}
         >
-          {isAdding ? 'Đã thêm!' : 'Thêm vào giỏ'}
+          {isAdding && !(product.sizes || product.flavors) ? 'Đã thêm!' : 'Thêm vào giỏ'}
         </button>
       </div>
     </div>

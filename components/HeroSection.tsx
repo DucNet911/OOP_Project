@@ -67,7 +67,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ featuredProducts, onProductSe
           style={{ backgroundImage: `url(${currentProduct.images[0]})` }}
         >
             <div className="w-full h-full bg-black bg-opacity-50 flex items-center justify-center text-center p-4">
-                <div className="text-white max-w-2xl animate-fade-in">
+                <div className="text-force-white max-w-2xl animate-fade-in">
                     <p className="text-gym-yellow font-bold uppercase tracking-widest mb-2">{currentProduct.brand}</p>
                     <h1 className="text-3xl md:text-5xl font-extrabold mb-4 tracking-tight">{currentProduct.name}</h1>
                     <button 

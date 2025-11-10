@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { Product, Brand, Article, NavLink, SortOption } from './types';
+import { Product, Article, NavLink, SortOption, Brand } from './types';
 
 // FIX: Added SVG icon components that were missing.
 export const StarIcon: React.FC<{ className?: string }> = ({ className }) => (
@@ -63,6 +62,21 @@ export const navLinks: NavLink[] = [
     {
       label: "Tăng sức mạnh",
       href: "#",
+      megaMenu: [
+        {
+          title: "Trước & Trong Tập",
+          links: [
+            { label: "Pre-Workout", href: "#", category: "Pre-Workout" },
+          ],
+        },
+        {
+          title: "Sức mạnh & Phục hồi",
+          links: [
+            { label: "Creatine", href: "#", category: "Creatine" },
+            { label: "BCAAs", href: "#", category: "BCAAs" },
+          ],
+        },
+      ],
     },
     {
       label: "Hỗ trợ sức khỏe",
@@ -78,26 +92,24 @@ export const navLinks: NavLink[] = [
     },
   ];
 
-// FIX: Added brands data.
-export const brands: Brand[] = [
-    { id: 1, name: 'Optimum Nutrition', logo: 'https://cdn.hpm.io/wp-content/uploads/2019/06/25133501/ON_logo_black.png' },
-    { id: 2, name: 'Myprotein', logo: 'https://static.thcdn.com/www/common/images/logos/logo-myprotein.svg' },
-    { id: 3, name: 'Rule 1', logo: 'https://cdn.shopify.com/s/files/1/0572/6533/3218/files/Rule1-Logo-Final-2021-01.png?v=1631589139' },
-    { id: 4, name: 'Applied Nutrition', logo: 'https://appliednutrition.uk/cdn/shop/files/Applied_Nutrition_Logo-01_1200x.png?v=1614285899' },
-    { id: 5, name: 'Nutrabolt (C4)', logo: 'https://seeklogo.com/images/C/c4-energy-logo-116223591A-seeklogo.com.png' },
-    { id: 6, name: 'BPI Sports', logo: 'https://cdn.shopify.com/s/files/1/0568/5074/3339/files/BPI_Sports_Logo.png?v=1635338148' },
-    { id: 7, name: 'Thorne Research', logo: 'https://seeklogo.com/images/T/thorne-logo-8E3221522D-seeklogo.com.png' },
-    { id: 8, name: 'Nutrex', logo: 'https://cdn.shopify.com/s/files/1/0528/9532/8522/files/nutrex-research-logo.png?v=1632732952' },
-    { id: 9, name: 'Redcon1', logo: 'https://cdn.shopify.com/s/files/1/2028/6933/files/redcon1-logo_400x.png?v=1614324881' },
-    { id: 10, name: 'GymSup', logo: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgNDAiPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNiIgc3R5bGU9ImZvbnQtd2VpZ2h0OmJvbGQ7ZmlsbDojZmZmIj5HWU1TVVA8L3RleHQ+PC9zdmc+' },
-];
-
 // FIX: Added sort options data.
 export const SORT_OPTIONS: SortOption[] = [
     { value: 'default', label: 'Mặc định' },
     { value: 'popularity', label: 'Phổ biến nhất' },
     { value: 'price-asc', label: 'Giá: Thấp đến cao' },
     { value: 'price-desc', label: 'Giá: Cao đến thấp' },
+];
+
+export const brands: Brand[] = [
+  { id: 1, name: 'Optimum Nutrition', logo: 'https://picsum.photos/seed/onlogo/200/100', isFeatured: true },
+  { id: 2, name: 'Myprotein', logo: 'https://picsum.photos/seed/mylogo/200/100', isFeatured: true },
+  { id: 3, name: 'Rule 1', logo: 'https://picsum.photos/seed/r1logo/200/100', isFeatured: true },
+  { id: 4, name: 'Applied Nutrition', logo: 'https://picsum.photos/seed/anlogo/200/100', isFeatured: true },
+  { id: 5, name: 'Nutrabolt (C4)', logo: 'https://picsum.photos/seed/c4logo/200/100', isFeatured: true },
+  { id: 6, name: 'BPI Sports', logo: 'https://picsum.photos/seed/bpilogo/200/100', isFeatured: true },
+  { id: 7, name: 'Thorne Research', logo: 'https://picsum.photos/seed/thornelogo/200/100', isFeatured: false },
+  { id: 8, name: 'Nutrex', logo: 'https://picsum.photos/seed/nutrexlogo/200/100', isFeatured: false },
+  { id: 9, name: 'Redcon1', logo: 'https://picsum.photos/seed/redconlogo/200/100', isFeatured: false },
 ];
 
 // FIX: Added product data.
@@ -112,7 +124,7 @@ export const allProducts: Product[] = [
       rating: 4.8,
       reviews: 1250,
       sold: 88,
-      total: 100,
+      stockQuantity: 100,
       category: 'Whey Protein',
       subCategory: 'Whey Protein Blend',
       brand: 'Optimum Nutrition',
@@ -136,7 +148,7 @@ export const allProducts: Product[] = [
       rating: 4.9,
       reviews: 980,
       sold: 65,
-      total: 100,
+      stockQuantity: 100,
       category: 'Whey Protein',
       subCategory: 'Whey Protein Isolate',
       brand: 'Rule 1',
@@ -159,7 +171,7 @@ export const allProducts: Product[] = [
         rating: 4.7,
         reviews: 850,
         sold: 112,
-        total: 100,
+        stockQuantity: 100,
         category: 'Whey Protein',
         subCategory: 'Whey Protein Isolate',
         brand: 'Myprotein',
@@ -177,7 +189,7 @@ export const allProducts: Product[] = [
         rating: 4.9,
         reviews: 720,
         sold: 0,
-        total: 100,
+        stockQuantity: 100,
         category: 'Whey Protein',
         subCategory: 'Whey Protein Isolate',
         brand: 'Applied Nutrition',
@@ -194,7 +206,7 @@ export const allProducts: Product[] = [
         rating: 4.6,
         reviews: 2100,
         sold: 0,
-        total: 100,
+        stockQuantity: 100,
         category: 'Tăng cân',
         brand: 'Optimum Nutrition',
         inStock: true,
@@ -216,7 +228,7 @@ export const allProducts: Product[] = [
         rating: 4.7,
         reviews: 1500,
         sold: 95,
-        total: 100,
+        stockQuantity: 100,
         category: 'Tăng cân',
         brand: 'Rule 1',
         inStock: false,
@@ -232,8 +244,9 @@ export const allProducts: Product[] = [
         rating: 4.8,
         reviews: 3200,
         sold: 0,
-        total: 100,
+        stockQuantity: 100,
         category: 'Tăng sức mạnh',
+        subCategory: 'Pre-Workout',
         brand: 'Nutrabolt (C4)',
         inStock: true,
         description: 'C4 Original là một trong những sản phẩm pre-workout phổ biến nhất thế giới, giúp tăng cường năng lượng, sự tập trung và sức bền cho buổi tập.',
@@ -249,8 +262,9 @@ export const allProducts: Product[] = [
         rating: 4.9,
         reviews: 1800,
         sold: 0,
-        total: 100,
+        stockQuantity: 100,
         category: 'Tăng sức mạnh',
+        subCategory: 'Pre-Workout',
         brand: 'Applied Nutrition',
         inStock: true,
         description: 'ABE (All Black Everything) mang đến sự kết hợp độc đáo của các thành phần được nghiên cứu khoa học để tăng hiệu suất thể chất, giảm mệt mỏi và cung cấp sự tập trung liên tục.',
@@ -265,7 +279,7 @@ export const allProducts: Product[] = [
         rating: 4.9,
         reviews: 5000,
         sold: 0,
-        total: 100,
+        stockQuantity: 100,
         category: 'Hỗ trợ sức khỏe',
         brand: 'Optimum Nutrition',
         inStock: true,
@@ -280,7 +294,7 @@ export const allProducts: Product[] = [
         rating: 4.8,
         reviews: 1200,
         sold: 0,
-        total: 100,
+        stockQuantity: 100,
         category: 'Hỗ trợ sức khỏe',
         brand: 'Myprotein',
         inStock: true,
@@ -295,7 +309,7 @@ export const allProducts: Product[] = [
         rating: 4.5,
         reviews: 350,
         sold: 0,
-        total: 100,
+        stockQuantity: 100,
         category: 'Phụ kiện',
         brand: 'GymSup',
         inStock: true,
@@ -310,8 +324,9 @@ export const allProducts: Product[] = [
         rating: 4.7,
         reviews: 640,
         sold: 0,
-        total: 100,
+        stockQuantity: 100,
         category: 'Tăng sức mạnh',
+        subCategory: 'BCAAs',
         brand: 'Rule 1',
         inStock: true,
         description: 'Bổ sung BCAA giúp phục hồi cơ bắp trong và sau khi tập, kết hợp với chất điện giải để bù nước và khoáng chất.',
@@ -326,8 +341,9 @@ export const allProducts: Product[] = [
         rating: 5.0,
         reviews: 890,
         sold: 0,
-        total: 100,
+        stockQuantity: 100,
         category: 'Tăng sức mạnh',
+        subCategory: 'Creatine',
         brand: 'Thorne Research',
         inStock: true,
         description: 'Creatine tinh khiết, được chứng nhận NSF for Sport®, hỗ trợ sản xuất năng lượng, sức bền và sức mạnh cơ bắp.',
@@ -341,8 +357,9 @@ export const allProducts: Product[] = [
         rating: 4.7,
         reviews: 1100,
         sold: 0,
-        total: 100,
+        stockQuantity: 100,
         category: 'Tăng sức mạnh',
+        subCategory: 'Pre-Workout',
         brand: 'Nutrex',
         inStock: true,
         description: 'Outlift là một sản phẩm pre-workout mạnh mẽ với các thành phần được định lượng lâm sàng để mang lại kết quả tối đa.',
@@ -357,8 +374,9 @@ export const allProducts: Product[] = [
         rating: 4.8,
         reviews: 2500,
         sold: 0,
-        total: 100,
+        stockQuantity: 100,
         category: 'Tăng sức mạnh',
+        subCategory: 'Pre-Workout',
         brand: 'Redcon1',
         inStock: true,
         description: 'Total War là pre-workout chuyên nghiệp, mang lại sự kết hợp mạnh mẽ của các chất kích thích và yếu tố tập trung cùng với các hợp chất bơm cơ.',
