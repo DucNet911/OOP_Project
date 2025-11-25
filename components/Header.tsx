@@ -148,10 +148,10 @@ const Header: React.FC<HeaderProps> = ({ navLinks, products, onCartClick, onAuth
                     <ul>
                       {searchResults.map(product => (
                         <li key={product.id} className="border-b border-gray-700 last:border-b-0">
-                          <button onClick={() => handleResultClick(product)} className="flex items-center w-full p-3 hover:bg-gym-darker transition-colors text-left">
+                          <button onClick={() => handleResultClick(product)} className="group flex items-center w-full p-3 hover:bg-black transition-colors text-left">
                             <img src={product.images[0]} alt={product.name} className="w-12 h-12 object-cover rounded-md mr-4" />
                             <div className="flex-1">
-                              <p className="text-white font-semibold text-sm">{product.name}</p>
+                              <p className="font-semibold text-sm group-hover:text-gray-50">{product.name}</p>
                               <p className="text-gym-yellow text-xs">{product.price.toLocaleString('vi-VN')}₫</p>
                             </div>
                           </button>

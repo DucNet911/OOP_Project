@@ -1,3 +1,5 @@
+
+
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { User, Theme, Product, Order, OrderStatus, Article, Brand } from '../types';
 import AddProductModal from './AddProductModal';
@@ -86,7 +88,7 @@ export interface ProductFormData {
     originalPrice: number;
     discountPercentage: number;
     stockQuantity: number;
-    image: string;
+    images: string[];
     category: string;
     description: string;
     subCategory?: string;
@@ -138,7 +140,6 @@ const DashboardView: React.FC<{
     const [timeframe, setTimeframe] = useState<'weekly' | 'monthly'>('monthly');
     
     const currentProductRevenue = productRevenueData[timeframe];
-    const maxChartValue = Math.max(...currentProductRevenue.chartData, 1);
 
     const renderChange = (change: number) => {
         const isPositive = change >= 0;
@@ -168,11 +169,8 @@ const DashboardView: React.FC<{
                     <h3 className="text-[var(--admin-text-secondary)] text-sm font-medium">Doanh số theo thời gian</h3>
                     <p className="text-3xl font-bold mt-1">{totalRevenue.toLocaleString('vi-VN')}₫</p>
                     <p className="text-green-500 text-sm font-semibold mt-1">Tổng doanh thu</p>
-                    <div className="h-32 mt-4 flex items-end">
-                    <svg width="100%" height="100%" viewBox="0 0 300 100" preserveAspectRatio="none" className="text-[var(--admin-text-accent)]"><path d="M0,70 C30,50 60,80 90,60 S150,20 180,50 S240,90 270,70 S300,40 300,40" stroke="currentColor" fill="none" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                    </div>
                 </div>
-                <div className="bg-[var(--admin-bg-card)] p-6 rounded-2xl shadow-sm flex flex-col">
+                <div className="bg-[var(--admin-bg-card)] p-6 rounded-2xl shadow-sm">
                     <div className="flex justify-between items-start">
                         <div>
                             <h3 className="text-[var(--admin-text-secondary)] text-sm font-medium">Doanh thu theo sản phẩm</h3>
@@ -183,20 +181,6 @@ const DashboardView: React.FC<{
                             <button onClick={() => setTimeframe('weekly')} className={buttonClass(timeframe === 'weekly')}>Tuần</button>
                             <button onClick={() => setTimeframe('monthly')} className={buttonClass(timeframe === 'monthly')}>Tháng</button>
                         </div>
-                    </div>
-                    
-                    <div className="h-32 mt-auto flex items-end justify-around space-x-2 pt-4">
-                        {currentProductRevenue.chartData.map((value, index) => {
-                             const heightPercent = (value / maxChartValue) * 80 + 5;
-                             return (
-                                <div 
-                                    key={index}
-                                    className="flex-1 bg-[var(--admin-bg-accent)] bg-opacity-30 rounded-t-lg transition-all duration-300 hover:bg-opacity-50"
-                                    style={{ height: `${heightPercent > 100 ? 100 : heightPercent}%` }}
-                                    title={value.toLocaleString('vi-VN') + '₫'}
-                                ></div>
-                             )
-                        })}
                     </div>
                 </div>
             </div>
@@ -628,7 +612,7 @@ const AdminPage: React.FC<AdminPageProps> = ({
         id: Date.now(),
         sku: formData.sku,
         name: formData.name,
-        images: [formData.image],
+        images: formData.images,
         price: Math.round(finalPrice),
         oldPrice: oldPrice,
         discountPercentage: formData.discountPercentage > 0 ? formData.discountPercentage : undefined,
@@ -671,7 +655,7 @@ const AdminPage: React.FC<AdminPageProps> = ({
       discountPercentage: formData.discountPercentage > 0 ? formData.discountPercentage : undefined,
       stockQuantity: formData.stockQuantity,
       inStock: formData.stockQuantity > 0,
-      images: [formData.image],
+      images: formData.images,
       category: formData.category,
       subCategory: formData.subCategory,
       description: formData.description,
